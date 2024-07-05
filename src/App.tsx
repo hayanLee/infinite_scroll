@@ -1,27 +1,12 @@
-import { useInfiniteQuery } from '@tanstack/react-query';
-import axios from 'axios';
 import { useEffect } from 'react';
 import { useInView } from 'react-intersection-observer';
 import TodoCard from './components/TodoCard';
+import useInfiniteTodos from './hooks/useInfiniteTodos';
 import { Todo } from './types/Todo.type';
-
-const fetchTodos = async ({ pageParam }: { pageParam: number }) => {
-    const res = await axios.get(`https://jsonplaceholder.typicode.com/todos?_page=${pageParam}`);
-    return res.data;
-};
 
 function App() {
     const { ref, inView } = useInView();
-    const { data, status, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery({
-        queryKey: ['todos'],
-        queryFn: fetchTodos,
-        initialPageParam: 1,
-        getNextPageParam: (lastPage, allPages) => {
-            console.log('👍', { lastPage, allPages });
-            const nextPage = lastPage.length ? allPages.length + 1 : undefined;
-            return nextPage;
-        },
-    });
+    const { data, status, fetchNextPage, hasNextPage } = useInfiniteTodos();
 
     useEffect(() => {
         console.log('🔥', inView);
